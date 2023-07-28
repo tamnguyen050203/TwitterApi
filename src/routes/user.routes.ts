@@ -5,17 +5,19 @@ import {
   registerController,
   logoutController,
   refreshTokenController,
-  emailVerifyController
+  verifyEmailController,
+  resendVerifyEmailController,
+  forgotPasswordController
 } from '~/controllers/users.controllers'
 import {
   refreshTokenValidator,
   loginValidator,
   registerValidator,
   accessTokenValidator,
-  emailVerifyTokenValidator
+  verifyEmailTokenValidator,
+  forgotPasswordValidator
 } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
-import { access } from 'fs'
 
 const userRouter = Router()
 
@@ -30,6 +32,8 @@ userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequ
  * Method: POST
  * Body: { refreshToken: string }
  */
-userRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(emailVerifyController))
+userRouter.post('/verify-email', verifyEmailTokenValidator, wrapRequestHandler(verifyEmailController))
+userRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
+userRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 
 export default userRouter

@@ -40,8 +40,37 @@ class UserService {
     })
   }
 
+  // Sign access and refresh token
   private signAccessAndRefreshToken({ user_id, verify }: { user_id: string; verify: boolean }) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  }
+
+  // Sign email verify token
+  private signEmailVerifyToken(user_id: string) {
+    return signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.EmailVerifyToken
+      },
+      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
+      options: {
+        expiresIn: process.env.EMAIL_TOKEN_VERIFY_EXPIRES_IN
+      }
+    })
+  }
+
+  // Sign forgot password token
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.ForgotPasswordToken
+      },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
+      options: {
+        expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN
+      }
+    })
   }
 
   // Login
@@ -63,21 +92,6 @@ class UserService {
       refresh_token
     }
   }
-
-  // Sign email verify token
-  private signEmailVerifyToken(user_id: string) {
-    return signToken({
-      payload: {
-        user_id,
-        token_type: TokenType.EmailVerifyToken
-      },
-      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
-      options: {
-        expiresIn: process.env.EMAIL_TOKEN_VERIFY_EXPIRES_IN
-      }
-    })
-  }
-
   // Register
   async register(payload: RegisterReqBody) {
     const user_id = new ObjectId()
@@ -118,6 +132,7 @@ class UserService {
     return Boolean(user)
   }
 
+  // Logout
   async logout(refresh_token: string) {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token })
     return {
@@ -125,6 +140,7 @@ class UserService {
     }
   }
 
+  // Refresh token
   async refreshToken(refresh_token_receive: string) {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token_receive })
     const user = await databaseService.refreshTokens.findOne({ token: refresh_token_receive })
@@ -146,6 +162,7 @@ class UserService {
     }
   }
 
+  // Verify email
   async verifyEmail(user_id: string) {
     const [token] = await Promise.all([
       this.signAccessAndRefreshToken({ user_id, verify: true }),
@@ -165,6 +182,48 @@ class UserService {
     return {
       access_token,
       refresh_token
+    }
+  }
+
+  // Resend email verify token
+  async resendVerifyEmail(user_id: string) {
+    const email_verify_token = await this.signEmailVerifyToken(user_id)
+
+    // Update email verify token
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: {
+          email_verify_token
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+
+    console.log('email verify token : ', email_verify_token)
+
+    return {
+      message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESSFUL
+    }
+  }
+
+  // Forgot password
+  async forgotPassword(user_id: string) {
+    const forgot_password_token = await this.signForgotPasswordToken(user_id)
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: {
+          forgot_password_token,
+          updated_at: '$$NOW'
+        }
+      }
+    ])
+
+    console.log('forgot password token : ', forgot_password_token)
+    return {
+      message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
   }
 }
