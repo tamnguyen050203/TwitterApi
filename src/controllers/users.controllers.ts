@@ -18,12 +18,11 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.services'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
-import exp from 'constants'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
   const user_id = user._id as ObjectId
-  const result = await userService.login(user_id.toString())
+  const result = await userService.login({ user_id: user_id.toString(), verify: user.verify })
   return res.json({
     message: USERS_MESSAGES.LOGIN_SUCCESSFUL,
     result
@@ -52,8 +51,11 @@ export const refreshTokenController = async (
   req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
   res: Response
 ) => {
-  const { refresh_token } = req.body
-  const result = await userService.refreshToken(refresh_token)
+  const { refresh_token, verify } = req.body
+  const result = await userService.refreshToken({
+    refresh_token_receive: refresh_token,
+    verify
+  })
   return res.json(result)
 }
 
@@ -117,8 +119,8 @@ export const forgotPasswordController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id } = req.user as User
-  const result = await userService.forgotPassword((_id as ObjectId).toString())
+  const { _id, verify } = req.user as User
+  const result = await userService.forgotPassword({ user_id: (_id as ObjectId).toString(), verify })
   return res.json(result)
 }
 
@@ -150,4 +152,8 @@ export const getMeController = async (req: Request, res: Response, next: NextFun
     message: USERS_MESSAGES.GET_ME_SUCCESSFUL,
     result
   })
+}
+
+export const updateMeController = async (req: Request, res: Response, next: NextFunction) => {
+  return res.json({})
 }
