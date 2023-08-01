@@ -39,5 +39,26 @@ export const USERS_MESSAGES = {
   RESET_PASSWORD_SUCCESSFUL: 'Reset password successful',
   GET_USER_PROFILE_SUCCESSFUL: 'Get user profile successful',
   GET_ME_SUCCESSFUL: 'Get me successful',
-  USER_NOT_VERIFIED: 'User not verified'
+  USER_NOT_VERIFIED: 'User not verified',
+  BIO_MUST_BE_STRING: 'Bio must be string',
+  BIO_MUST_BE_BETWEEN_1_AND_200_CHARACTERS: 'Bio must be between 1 and 200 characters',
+  LOCATION_MUST_BE_STRING: 'Location must be string',
+  LOCATION_MUST_BE_BETWEEN_1_AND_200_CHARACTERS: 'Location must be between 1 and 200 characters',
+  WEBSITE_MUST_BE_STRING: 'Website must be string',
+  WEBSITE_MUST_BE_BETWEEN_1_AND_200_CHARACTERS: 'Website must be between 1 and 200 characters',
+  USERNAME_MUST_BE_STRING: 'Username must be string',
+  USERNAME_MUST_BE_BETWEEN_1_AND_50_CHARACTERS: 'Username must be between 1 and 50 characters',
+  IMAGE_MUST_BE_STRING: 'Image must be string',
+  IMAGE_MUST_BE_BETWEEN_1_AND_400_CHARACTERS: 'Image must be between 1 and 400 characters',
+  UPDATE_ME_SUCCESSFUL: 'Update me successful',
+  GET_PROFILE_SUCCESSFUL: 'Get profile successful',
+  FOLLOW_SUCCESSFUL: 'Follow successful',
+  FOLLOWED: 'Followed',
+  CANNOT_FOLLOW_YOURSELF: 'Cannot follow yourself',
+  INVALID_USER_ID: 'Invalid user id',
+  UNFOLLOW_SUCCESSFUL: 'Unfollow successful',
+  ALREADY_UNFOLLOWED: 'Already unfollowed',
+  USERNAME_IS_INVALID:
+    'Username must be 4-15 characters and only include letters, numbers and underscores, not only numbers',
+  USERNAME_IS_EXISTED: 'Username is existed'
 } as const
