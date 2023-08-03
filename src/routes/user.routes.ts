@@ -15,7 +15,8 @@ import {
   getProfileController,
   followController,
   unfollowController,
-  changePasswordController
+  changePasswordController,
+  oauthController
 } from '~/controllers/users.controllers'
 import {
   refreshTokenValidator,
@@ -189,4 +190,11 @@ userRouter.put(
   wrapRequestHandler(changePasswordController)
 )
 
+/**
+ * Description: OAuth with Google
+ * Path: /api/users/oauth/google
+ * Query: { code: string }
+ * Return: { access_token: string, refresh_token: string }
+ */
+userRouter.get('/oauth/google', wrapRequestHandler(oauthController))
 export default userRouter
