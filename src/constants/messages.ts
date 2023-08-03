@@ -60,5 +60,7 @@ export const USERS_MESSAGES = {
   ALREADY_UNFOLLOWED: 'Already unfollowed',
   USERNAME_IS_INVALID:
     'Username must be 4-15 characters and only include letters, numbers and underscores, not only numbers',
-  USERNAME_IS_EXISTED: 'Username is existed'
+  USERNAME_IS_EXISTED: 'Username is existed',
+  CHANGE_PASSWORD_SUCCESSFUL: 'Change password successful',
+  PASSWORD_INCORRECT: 'Password incorrect'
 } as const

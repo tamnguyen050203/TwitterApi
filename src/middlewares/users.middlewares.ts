@@ -14,6 +14,7 @@ import { ObjectId } from 'mongodb'
 import { TokenPayload } from '~/models/requests/User.requests'
 import { UserVerifyStatus } from '~/constants/enums'
 import { REGEX_USERNAME } from '~/constants/regex'
+import User from '~/models/schemas/User.schema'
 
 const passwordSchema: ParamSchema = {
   notEmpty: {
@@ -38,34 +39,36 @@ const passwordSchema: ParamSchema = {
   }
 }
 
-const confirmPasswordSchema: ParamSchema = {
-  notEmpty: {
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
-  },
-  isString: {
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_A_STRING
-  },
-  trim: true,
-  isLength: {
-    options: { min: 6, max: 100 },
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_6_TO_100
-  },
-  isStrongPassword: {
-    options: {
-      minLength: 6,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1
+const confirmPasswordSchema = (key: string): ParamSchema => {
+  return {
+    notEmpty: {
+      errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
     },
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
-  },
-  custom: {
-    options: (value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error(USERS_MESSAGES.PASSWORD_AND_CONFIRM_PASSWORD_NOT_MATCH)
+    isString: {
+      errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_A_STRING
+    },
+    trim: true,
+    isLength: {
+      options: { min: 6, max: 100 },
+      errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_6_TO_100
+    },
+    isStrongPassword: {
+      options: {
+        minLength: 6,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1
+      },
+      errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
+    },
+    custom: {
+      options: (value, { req }) => {
+        if (value !== req.body[key]) {
+          throw new Error(USERS_MESSAGES.PASSWORD_AND_CONFIRM_PASSWORD_NOT_MATCH)
+        }
+        return true
       }
-      return true
     }
   }
 }
@@ -189,6 +192,15 @@ const userIdSchema: ParamSchema = {
   }
 }
 
+const comparePassword = (value: string, user_password: string) => {
+  if (hashPassword(value) !== user_password) {
+    throw new ErrorWithStatus({
+      message: USERS_MESSAGES.PASSWORD_INCORRECT,
+      status: HTTP_STATUS.UNAUTHORIZED
+    })
+  }
+}
+
 export const loginValidator = validate(
   checkSchema(
     {
@@ -231,7 +243,7 @@ export const registerValidator = validate(
         }
       },
       password: passwordSchema,
-      confirm_password: confirmPasswordSchema,
+      confirm_password: confirmPasswordSchema('confirm_password'),
       date_of_birth: dateOfBirthSchema
     },
     ['body'] // only validate body
@@ -386,7 +398,7 @@ export const resetPasswordValidator = validate(
   checkSchema(
     {
       password: passwordSchema,
-      confirm_password: confirmPasswordSchema,
+      confirm_password: confirmPasswordSchema('password'),
       forgot_password_token: forgotPasswordTokenSchema
     },
     ['body']
@@ -493,5 +505,32 @@ export const unfollowValidator = validate(
       user_id: userIdSchema
     },
     ['params']
+  )
+)
+
+export const changePasswordValidator = validate(
+  checkSchema(
+    {
+      old_password: {
+        custom: {
+          options: async (value: string, { req }) => {
+            const { user_id } = (req as Request).decoded_authorization as TokenPayload
+            const user = await databaseService.users.findOne({
+              _id: new ObjectId(user_id)
+            })
+            if (user === null) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+            comparePassword(value, user.password)
+          }
+        }
+      },
+      new_password: passwordSchema,
+      confirm_new_password: confirmPasswordSchema('new_password')
+    },
+    ['body']
   )
 )
