@@ -4,11 +4,11 @@ import { UPLOAD_DIR } from '~/constants/dir'
 import { MEDIA_MESSAGES } from '~/constants/messages'
 import mediasService from '~/services/medias.services'
 
-export const uploadSingleImage = async (req: Request, res: Response, next: NextFunction) => {
-  const url = await mediasService.handleUploadSingleImage(req)
+export const uploadImage = async (req: Request, res: Response, next: NextFunction) => {
+  const urls = await mediasService.handleUploadImage(req)
   return res.status(200).json({
     message: MEDIA_MESSAGES.UPLOAD_SUCCESSFUL,
-    result: url
+    result: urls
   })
 }
 

@@ -12,12 +12,13 @@ export const initFolder = (folder: string) => {
   }
 }
 
-export const handleUploadSingleImage = async (req: Request) => {
+export const handleUploadImage = async (req: Request) => {
   const form = formidable({
     uploadDir: path.resolve(UPLOAD_TEMP_DIR),
-    maxFiles: 1,
+    maxFiles: 4,
     keepExtensions: true,
     maxFieldsSize: 300 * 1024, // 300KB
+    maxTotalFileSize: 300 * 1024 * 4, // 300KB * 4
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'image' && Boolean(mimetype?.includes('image/'))
       if (!valid) {
@@ -26,7 +27,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       return valid
     }
   })
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err)
@@ -34,7 +35,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       if (!files.image) {
         return reject(new Error('File is not found'))
       }
-      resolve((files.image as File[])[0])
+      resolve(files.image as File[])
     })
   })
 }
