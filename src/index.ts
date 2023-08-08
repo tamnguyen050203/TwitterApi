@@ -5,11 +5,14 @@ import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediaRouter from './routes/media.routes'
 import { initFolder } from './utils/file'
 import { UPLOAD_TEMP_DIR } from './constants/dir'
+import { config } from 'dotenv'
+
+config()
 
 databaseService.connect()
 
 const app = express()
-const port = 3066
+const port = process.env.PORT || 3066
 
 // Crate folder
 initFolder(UPLOAD_TEMP_DIR)
