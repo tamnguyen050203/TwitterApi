@@ -1,7 +1,7 @@
-import { getNameFromFullName, handleUploadImage } from '~/utils/file'
+import { getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import { Request } from 'express'
 import sharp from 'sharp'
-import { UPLOAD_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import fs from 'fs'
 import { isProduction } from '~/constants/config'
 import { MediaType } from '~/constants/enums'
@@ -13,7 +13,7 @@ class MediasService {
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullName(file.newFilename)
-        const newPath = UPLOAD_DIR + '/' + newName + '.jpg'
+        const newPath = UPLOAD_IMAGE_DIR + '/' + newName + '.jpg'
         await sharp(file.filepath).jpeg({ quality: 80 }).toFile(newPath)
         fs.unlinkSync(file.filepath)
         return {
@@ -24,6 +24,19 @@ class MediasService {
         }
       })
     )
+    return result
+  }
+
+  async handleUploadVideo(req: Request) {
+    const files = await handleUploadVideo(req)
+    const result: Media[] = files.map((file) => {
+      return {
+        url: isProduction
+          ? `${process.env.HOST}/static/video/${file.newFilename}`
+          : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
+        type: MediaType.Video
+      }
+    })
     return result
   }
 }
