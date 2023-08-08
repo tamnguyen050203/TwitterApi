@@ -65,3 +65,10 @@ export const USERS_MESSAGES = {
   PASSWORD_INCORRECT: 'Password incorrect',
   GMAIL_NOT_VERIFIED: 'Gmail not verified'
 } as const
+
+export const MEDIA_MESSAGES = {
+  UPLOAD_SUCCESSFUL: 'Upload successful',
+  NOT_FOUND: 'Not found'
+}
+
+export const POSTS_MESSAGES = {}
