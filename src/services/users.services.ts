@@ -241,24 +241,30 @@ class UserService {
   }
 
   // Refresh token
-  async refreshToken({ refresh_token_receive, verify }: { refresh_token_receive: string; verify: UserVerifyStatus }) {
-    await databaseService.refreshTokens.deleteOne({ token: refresh_token_receive })
-    const user = await databaseService.refreshTokens.findOne({ token: refresh_token_receive })
-    const [access_token, refresh_token] = await this.signAccessAndRefreshToken({
-      user_id: user?.user_id.toString() || '',
-      verify
-    })
-
+  async refreshToken({
+    user_id,
+    refresh_token,
+    verify
+  }: {
+    user_id: string
+    refresh_token: string
+    verify: UserVerifyStatus
+  }) {
+    const [new_access_token, new_refresh_token] = await Promise.all([
+      this.signAccessToken({ user_id, verify }),
+      this.signRefreshToken({ user_id, verify }),
+      databaseService.refreshTokens.deleteOne({ token: refresh_token })
+    ])
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({
-        user_id: new ObjectId(user?.user_id),
+        user_id: new ObjectId(user_id),
         token: refresh_token
       })
     )
 
     return {
-      access_token,
-      refresh_token
+      access_token: new_access_token,
+      refresh_token: new_refresh_token
     }
   }
 

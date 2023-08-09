@@ -56,19 +56,18 @@ userRouter.post('/register', registerValidator, wrapRequestHandler(registerContr
 
 /**
  * Description. Logout a user
- * Path: /api/users/refresh-token
- * Header: { Authorization: Bearer <access_token> }
- * Body: { refresh_token: string }
- */
-userRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
-
-/**
- * Description. Logout a user
  * Path: /api/users/logout
  * Header: { Authorization: Bearer <access_token> }
  * Body: { refresh_token: string }
  */
 userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+/**
+ * Description. Refresh token
+ * Path: /api/users/refresh-token
+ * Body: { refresh_token: string }
+ */
+userRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
 /**
  * Description. Verify email user client click link in email

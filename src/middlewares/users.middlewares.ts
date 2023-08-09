@@ -298,7 +298,7 @@ export const refreshTokenValidator = validate(
             })
           }
           try {
-            const [decoded_authorization, refresh_token] = await Promise.all([
+            const [decoded_refresh_token, refresh_token] = await Promise.all([
               verifyToken({
                 token: value,
                 secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
@@ -311,7 +311,7 @@ export const refreshTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            ;(req as Request).decoded_authorization = decoded_authorization
+            ;(req as Request).decoded_refresh_token = decoded_refresh_token
           } catch (error) {
             if (error instanceof JsonWebTokenError) {
               throw new ErrorWithStatus({

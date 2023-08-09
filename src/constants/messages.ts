@@ -63,7 +63,8 @@ export const USERS_MESSAGES = {
   USERNAME_IS_EXISTED: 'Username is existed',
   CHANGE_PASSWORD_SUCCESSFUL: 'Change password successful',
   PASSWORD_INCORRECT: 'Password incorrect',
-  GMAIL_NOT_VERIFIED: 'Gmail not verified'
+  GMAIL_NOT_VERIFIED: 'Gmail not verified',
+  REFRESH_TOKEN_SUCCESSFUL: 'Refresh token successful'
 } as const
 
 export const MEDIA_MESSAGES = {
