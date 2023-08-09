@@ -68,7 +68,8 @@ export const USERS_MESSAGES = {
 
 export const MEDIA_MESSAGES = {
   UPLOAD_SUCCESSFUL: 'Upload successful',
-  NOT_FOUND: 'Not found'
+  NOT_FOUND: 'Not found',
+  REQUIRED_RANGE_HEADER: 'Required range header'
 }
 
 export const POSTS_MESSAGES = {}
