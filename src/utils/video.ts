@@ -108,7 +108,7 @@ ffmpeg -y -i ${inputPath} -preset veryslow -g 48 -crf 17 -sc_threshold -map 0:0 
 
   command = command.replace(new RegExp('\\\\', 'g'), '/').trim()
 
-return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     exec(`${command}`, (err, stdout, stderr) => {
       if (err) {
         return reject(err)

@@ -7,12 +7,14 @@ import { initFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR, UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_TEMP_DIR } from './constants/dir'
 import { config } from 'dotenv'
 import staticRouter from './routes/static.routes'
+import cors from 'cors'
 
 config()
 
 databaseService.connect()
 
 const app = express()
+app.use(cors())
 const port = process.env.PORT || 3066
 
 // Crate folder

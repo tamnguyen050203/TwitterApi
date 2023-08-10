@@ -3,14 +3,14 @@ import {
   serveImageController,
   serveVideoStreamController,
   serveSegmentController,
-  serveM3U8Controller
+  serveM3u8Controller
 } from '~/controllers/media.controllers'
 
 const staticRouter = Router()
 
 staticRouter.get('/image/:name', serveImageController)
 staticRouter.get('/video-stream/:name', serveVideoStreamController)
-staticRouter.get('/video-hls/:id', serveM3U8Controller)
+staticRouter.get('/video-hls/:id/master.m3u8', serveM3u8Controller)
 staticRouter.get('/video-hls/:id/:v/:segment', serveSegmentController)
 
 export default staticRouter
