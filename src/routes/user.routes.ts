@@ -42,21 +42,24 @@ const userRouter = Router()
 
 /**
  * Description. Login a user
- * Path: /api/users/login
+ * Path: /users/login
+ * Method: POST
  * Body: { email: string, password: string }
  */
 userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 
 /**
  * Description. Register a new user
- * Path: /api/users/register
+ * Path: /users/register
+ * Method: POST
  * Body: { name: string, email: string, password: string, confirm_password: string, date_of_birth: ISO8601 }
  */
 userRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
 /**
  * Description. Logout a user
- * Path: /api/users/logout
+ * Path: /users/logout
+ * Method: POST
  * Header: { Authorization: Bearer <access_token> }
  * Body: { refresh_token: string }
  */
@@ -64,21 +67,24 @@ userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequ
 
 /**
  * Description. Refresh token
- * Path: /api/users/refresh-token
+ * Path: /users/refresh-token
+ * Method: POST
  * Body: { refresh_token: string }
  */
 userRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
 /**
  * Description. Verify email user client click link in email
- * Path: /api/users/verify-email
+ * Path: /users/verify-email
+ * Method: POST
  * Body: { refreshToken: string }
  */
 userRouter.post('/verify-email', verifyEmailTokenValidator, wrapRequestHandler(verifyEmailController))
 
 /**
  * Description. Verify email when user client click on the link in email
- * Path: /api/users/resend-verify-email
+ * Path: /users/resend-verify-email
+ * Method: POST
  * Header: { Authorization: Bearer <access_token> }
  * Body: {}
  */
@@ -86,14 +92,16 @@ userRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler
 
 /**
  * Description. Submit email to reset password, send email to user
- * Path: /api/users/forgot-password
+ * Path: /users/forgot-password
+ * Method: POST
  * Body: {email: string}
  */
 userRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 
 /**
  * Description. Verify link in email to reset password
- * Path: /api/users/verify-forgot-password
+ * Path: /users/verify-forgot-password
+ * Method: POST
  * Body: {forgot_password_token: string}
  */
 userRouter.post(
@@ -104,14 +112,16 @@ userRouter.post(
 
 /**
  * Description: Reset password
- * Path: /api/users/reset-password
+ * Path: /users/reset-password
+ * Method: POST
  * Body: {forgot_password_token: string, password: string, confirm_password: string}
  */
 userRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
 
 /**
  * Description: Get info of user
- * Path: /api/users/me
+ * Path: /users/me
+ * Method: GET
  * Header: { Authorization: Bearer <access_token> }
  * Body: {}
  */
@@ -119,8 +129,9 @@ userRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
 
 /**
  * Description: Update my profile
- * Path: /api/users/me
- * Header: { Authorization: Bearer <access_token> }
+ * Path: /users/me
+ * Method: PATCH
+ * Header: { Authorization: Bearer <access_token>, verified: true }
  * Body: UserSchema
  */
 userRouter.patch(
@@ -143,14 +154,16 @@ userRouter.patch(
 
 /**
  * Description: Get user profile
- * Path: /api/users/:username
+ * Path: /users/:username
+ * Method: GET
  */
 userRouter.get('/:username', wrapRequestHandler(getProfileController))
 
 /**
  * Description: Follow someone
- * Path: /api/users/follow
- * Header: { Authorization: Bearer <access_token> }
+ * Path: /users/follow
+ * Method: POST
+ * Header: { Authorization: Bearer <access_token>, verified: true }
  * Body: { followed_user_id: string }
  */
 userRouter.post(
@@ -163,8 +176,9 @@ userRouter.post(
 
 /**
  * Description: Un Follow someone
- * Path: /api/users/follow/user_id
- * Header: { Authorization: Bearer <access_token> }
+ * Path: /users/follow/user_id
+ * Method: DELETE
+ * Header: { Authorization: Bearer <access_token>, verified: true }
  * Body: { followed_user_id: string }
  */
 userRouter.delete(
@@ -177,8 +191,9 @@ userRouter.delete(
 
 /**
  * Description: Change password
- * Path: /api/users/change-password
- * Header: { Authorization: Bearer <access_token> }
+ * Path: /users/change-password
+ * Method: PUT
+ * Header: { Authorization: Bearer <access_token>, verified: true }
  * Body: { old_password: string, new_password: string, confirm_new_password: string }
  */
 userRouter.put(
@@ -191,7 +206,8 @@ userRouter.put(
 
 /**
  * Description: OAuth with Google
- * Path: /api/users/oauth/google
+ * Path: /users/oauth/google
+ * Method: GET
  * Query: { code: string }
  * Return: { access_token: string, refresh_token: string }
  */
