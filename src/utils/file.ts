@@ -41,16 +41,23 @@ export const handleUploadImage = async (req: Request) => {
 }
 
 export const handleUploadVideo = async (req: Request) => {
+  const nanoId = (await import('nanoid')).nanoid
+  const idName = nanoId()
+  const folderPath = path.resolve(UPLOAD_VIDEO_DIR, idName)
+  fs.mkdirSync(folderPath)
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_DIR,
+    uploadDir: folderPath,
     maxFiles: 1,
-    maxFieldsSize: 50 * 1024 * 1024, // 50MB
+    maxFileSize: 50 * 1024 * 1024, // 50MB
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'video' && Boolean(mimetype?.includes('mp4') || mimetype?.includes('quicktime'))
       if (!valid) {
         form.emit('error' as any, new Error('File type is not valid') as any)
       }
       return valid
+    },
+    filename: function () {
+      return idName
     }
   })
   return new Promise<File[]>((resolve, reject) => {
@@ -58,15 +65,16 @@ export const handleUploadVideo = async (req: Request) => {
       if (err) {
         return reject(err)
       }
-      if (!files.video) {
-        return reject(new Error('File is not found'))
+      // eslint-disable-next-line no-extra-boolean-cast
+      if (!Boolean(files.video)) {
+        return reject(new Error('File is empty'))
       }
       const videos = files.video as File[]
       videos.forEach((video) => {
         const ext = getExtension(video.originalFilename as string)
-        console.log(video.filepath)
         fs.renameSync(video.filepath, video.filepath + '.' + ext)
         video.newFilename = video.newFilename + '.' + ext
+        video.filepath = video.filepath + '.' + ext
       })
       resolve(files.video as File[])
     })

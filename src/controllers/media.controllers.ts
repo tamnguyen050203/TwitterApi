@@ -77,3 +77,34 @@ export const serveVideoStreamController = (req: Request, res: Response, next: Ne
   const videoStream = fs.createReadStream(videoPath, { start, end })
   videoStream.pipe(res)
 }
+
+export const uploadVideoHLSController = async (req: Request, res: Response, next: NextFunction) => {
+  const urls = await mediasService.handleUploadVideoHLS(req)
+  return res.status(200).json({
+    message: MEDIA_MESSAGES.UPLOAD_SUCCESSFUL,
+    result: urls
+  })
+}
+
+export const serveM3U8Controller = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8'), (err) => {
+    if (err) {
+      res.status((err as any).status).json({
+        message: MEDIA_MESSAGES.NOT_FOUND
+      })
+    }
+  })
+}
+
+export const serveSegmentController = (req: Request, res: Response, next: NextFunction) => {
+  const { id, v, segment } = req.params
+  // segment: 0.ts, 1.ts, 2.ts, ...
+  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
+    if (err) {
+      res.status((err as any).status).json({
+        message: MEDIA_MESSAGES.NOT_FOUND
+      })
+    }
+  })
+}

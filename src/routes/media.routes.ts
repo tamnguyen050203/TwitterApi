@@ -1,9 +1,20 @@
 import { Router } from 'express'
-import { uploadImageController, uploadVideoController } from '../controllers/media.controllers'
+import {
+  uploadImageController,
+  uploadVideoController,
+  uploadVideoHLSController
+} from '../controllers/media.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
 
 const mediaRouter = Router()
+
+mediaRouter.post(
+  '/upload-image',
+  accessTokenValidator,
+  verifiedUserValidator,
+  wrapRequestHandler(uploadImageController)
+)
 
 mediaRouter.post(
   '/upload-video',
@@ -13,10 +24,10 @@ mediaRouter.post(
 )
 
 mediaRouter.post(
-  '/upload-image',
+  '/upload-video-hls',
   accessTokenValidator,
   verifiedUserValidator,
-  wrapRequestHandler(uploadImageController)
+  wrapRequestHandler(uploadVideoHLSController)
 )
 
 export default mediaRouter
