@@ -17,6 +17,13 @@ export enum MediaType {
   HLS
 }
 
+export enum EncodingStatus {
+  Pending,
+  Processing,
+  Success,
+  Failed
+}
+
 export enum TweetAudience {
   Everyone, // 0
   TwitterCircle // 1

@@ -6,6 +6,7 @@ import { MEDIA_MESSAGES } from '~/constants/messages'
 import mediasService from '~/services/medias.services'
 import fs from 'fs'
 import mime from 'mime'
+import { Result } from 'express-validator'
 
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
   const urls = await mediasService.handleUploadImage(req)
@@ -107,5 +108,14 @@ export const serveSegmentController = (req: Request, res: Response, next: NextFu
         message: MEDIA_MESSAGES.NOT_FOUND
       })
     }
+  })
+}
+
+export const videoStatusController = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const result = await mediasService.getVideoStatus(id as string)
+  return res.status(200).json({
+    message: MEDIA_MESSAGES.GET_VIDEO_STATUS_SUCCESSFUL,
+    result: result
   })
 }
