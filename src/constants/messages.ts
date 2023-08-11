@@ -74,4 +74,18 @@ export const MEDIA_MESSAGES = {
   GET_VIDEO_STATUS_SUCCESSFUL: 'Get video status successful'
 }
 
+export const TWEET_MESSAGES = {
+  INVALID_TYPE: 'Invalid type',
+  INVALID_AUDIENCE: 'Invalid audience',
+  INVALID_MEDIA: 'Invalid media',
+  PARENT_ID_MUST_BE_A_VALID_TWEET_ID: 'Parent id must be a valid tweet id',
+  PARENT_ID_MUST_BE_NULL: 'Parent id must be null',
+  CONTENT_MUST_BE_EMPTY: 'Content must be empty',
+  CONTENT_MUST_BE_A_NON_EMPTY_STRING: 'Content must be a non-empty string',
+  HASHTAGS_MUST_BE_AN_ARRAY_OF_STRING: 'Hashtags must be an array of string',
+  MENTIONS_MUST_BE_AN_ARRAY_OF_USER_ID: 'Mentions must be an array of user id',
+  MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Medias must be an array of media object',
+  CREATE_TWEET_SUCCESSFUL: 'Create tweet successful'
+}
+
 export const POSTS_MESSAGES = {}

@@ -14,7 +14,7 @@ const mediaRouter = Router()
  * Description. Upload images
  * Path: /medias/upload-image
  * Method: POST
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: FormData { image: Files }
  */
 mediaRouter.post(
@@ -28,7 +28,7 @@ mediaRouter.post(
  * Description. Upload one video
  * Path: /medias/upload-video
  * Method: POST
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: FormData { video: File }
  */
 mediaRouter.post(
@@ -42,7 +42,7 @@ mediaRouter.post(
  * Description. Upload one video HLS
  * Path: /medias/upload-video-hls
  * Method: POST
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: FormData { video: File }
  */
 mediaRouter.post(
@@ -55,7 +55,7 @@ mediaRouter.post(
 /**
  * Description. Upload one video HLS
  * Path: /medias/upload-video-hls
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: FormData { video: File }
  */
 mediaRouter.get(

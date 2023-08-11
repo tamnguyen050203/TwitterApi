@@ -131,7 +131,7 @@ userRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
  * Description: Update my profile
  * Path: /users/me
  * Method: PATCH
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: UserSchema
  */
 userRouter.patch(
@@ -163,7 +163,7 @@ userRouter.get('/:username', wrapRequestHandler(getProfileController))
  * Description: Follow someone
  * Path: /users/follow
  * Method: POST
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: { followed_user_id: string }
  */
 userRouter.post(
@@ -178,7 +178,7 @@ userRouter.post(
  * Description: Un Follow someone
  * Path: /users/follow/user_id
  * Method: DELETE
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: { followed_user_id: string }
  */
 userRouter.delete(
@@ -193,7 +193,7 @@ userRouter.delete(
  * Description: Change password
  * Path: /users/change-password
  * Method: PUT
- * Header: { Authorization: Bearer <access_token>, verified: true }
+ * Header: { Authorization: Bearer <access_token> }
  * Body: { old_password: string, new_password: string, confirm_new_password: string }
  */
 userRouter.put(
