@@ -72,7 +72,7 @@ export const MEDIA_MESSAGES = {
   NOT_FOUND: 'Not found',
   REQUIRED_RANGE_HEADER: 'Required range header',
   GET_VIDEO_STATUS_SUCCESSFUL: 'Get video status successful'
-}
+} as const
 
 export const TWEET_MESSAGES = {
   INVALID_TYPE: 'Invalid type',
@@ -85,13 +85,13 @@ export const TWEET_MESSAGES = {
   HASHTAGS_MUST_BE_AN_ARRAY_OF_STRING: 'Hashtags must be an array of string',
   MENTIONS_MUST_BE_AN_ARRAY_OF_USER_ID: 'Mentions must be an array of user id',
   MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECT: 'Medias must be an array of media object',
-  CREATE_TWEET_SUCCESSFUL: 'Create tweet successful'
-}
+  CREATE_TWEET_SUCCESSFUL: 'Create tweet successful',
+  INVALID_TWEET_ID: 'Invalid tweet id',
+  TWEET_NOT_FOUND: 'Tweet not found'
+} as const
 
 export const BOOKMARK_MESSAGES = {
   TWEET_ID_REQUIRED: 'Tweet id is required',
   BOOKMARK_SUCCESSFUL: 'Bookmark successful',
   REMOVE_BOOKMARK_SUCCESSFUL: 'Remove bookmark successful'
-}
-
-export const POSTS_MESSAGES = {}
+} as const
