@@ -88,4 +88,10 @@ export const TWEET_MESSAGES = {
   CREATE_TWEET_SUCCESSFUL: 'Create tweet successful'
 }
 
+export const BOOKMARK_MESSAGES = {
+  TWEET_ID_REQUIRED: 'Tweet id is required',
+  BOOKMARK_SUCCESSFUL: 'Bookmark successful',
+  REMOVE_BOOKMARK_SUCCESSFUL: 'Remove bookmark successful'
+}
+
 export const POSTS_MESSAGES = {}
