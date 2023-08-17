@@ -1,11 +1,5 @@
-import { MediaType } from 'express'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
-
-interface Media {
-  url: string
-  type: MediaType // video, image
-}
 
 interface UserType {
   _id?: ObjectId
