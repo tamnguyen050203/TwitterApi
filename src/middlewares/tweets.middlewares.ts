@@ -1,4 +1,4 @@
-import { checkSchema } from 'express-validator'
+import { ParamSchema, checkSchema } from 'express-validator'
 import { at, isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constants/enums'
@@ -16,15 +16,17 @@ const tweetType = numberEnumToArray(TweetType)
 const tweetAudience = numberEnumToArray(TweetAudience)
 const mediaType = numberEnumToArray(MediaType)
 
+const tweetTypeSchema: ParamSchema = {
+  isIn: {
+    options: [tweetType],
+    errorMessage: TWEET_MESSAGES.INVALID_TYPE
+  }
+}
+
 export const createTweetValidator = validate(
   checkSchema(
     {
-      type: {
-        isIn: {
-          options: [tweetType],
-          errorMessage: TWEET_MESSAGES.INVALID_TYPE
-        }
-      },
+      type: tweetTypeSchema,
       audience: {
         isIn: {
           options: [tweetAudience],
@@ -319,3 +321,36 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   }
   next()
 })
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: tweetTypeSchema,
+      limit: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const num = Number(value)
+            if (num > 100 || num < 1) {
+              throw new Error(TWEET_MESSAGES.LIMIT_MUST_BE_BETWEEN_1_AND_100)
+            }
+            return true
+          }
+        }
+      },
+      page: {
+        isNumeric: true,
+        custom: {
+          options: async (value, { req }) => {
+            const num = Number(value)
+            if (num < 1) {
+              throw new Error(TWEET_MESSAGES.PAGE_MUST_BE_GREATER_THAN_0)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
+  )
+)
