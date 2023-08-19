@@ -101,3 +101,7 @@ export const BOOKMARK_MESSAGES = {
   BOOKMARK_SUCCESSFUL: 'Bookmark successful',
   REMOVE_BOOKMARK_SUCCESSFUL: 'Remove bookmark successful'
 } as const
+
+export const SEARCH_MESSAGES = {
+  SEARCH_SUCCESSFULLY: 'Search successfully'
+}
