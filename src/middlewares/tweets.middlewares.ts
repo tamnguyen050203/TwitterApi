@@ -325,7 +325,15 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
 export const getTweetChildrenValidator = validate(
   checkSchema(
     {
-      tweet_type: tweetTypeSchema,
+      tweet_type: tweetTypeSchema
+    },
+    ['query']
+  )
+)
+
+export const paginationValidator = validate(
+  checkSchema(
+    {
       limit: {
         isNumeric: true,
         custom: {

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import { TweetRequestBody, TweetParam, TweetQuery } from '~/models/requests/Tweet.requests'
+import { TweetRequestBody, TweetParam, TweetQuery, Pagination } from '~/models/requests/Tweet.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
-import tweetService from '~/services/tweet.services'
+import tweetsService from '~/services/tweet.services'
 import { TWEET_MESSAGES } from '~/constants/messages'
 import { TokenPayload } from '~/models/requests/User.requests'
 import { TweetType } from '~/constants/enums'
@@ -12,7 +12,7 @@ export const createTweetController = async (
   next: NextFunction
 ) => {
   const { user_id } = req.decoded_authorization as TokenPayload
-  const result = await tweetService.createTweet({
+  const result = await tweetsService.createTweet({
     user_id,
     body: req.body
   })
@@ -20,7 +20,7 @@ export const createTweetController = async (
 }
 
 export const getTweetController = async (req: Request, res: Response, next: NextFunction) => {
-  const result = await tweetService.increaseView(req.params.tweet_id, req.decoded_authorization?.user_id)
+  const result = await tweetsService.increaseView(req.params.tweet_id, req.decoded_authorization?.user_id)
   const tweet = {
     ...req.tweet,
     guest_views: result.guest_views,
@@ -40,7 +40,7 @@ export const getTweetChildrenController = async (
   const page = Number(req.query.page)
   const user_id = req.decoded_authorization?.user_id
 
-  const { total, tweets } = await tweetService.getTweetChildren({
+  const { total, tweets } = await tweetsService.getTweetChildren({
     tweet_id: req.params.tweet_id,
     tweet_type,
     limit,
@@ -56,5 +56,21 @@ export const getTweetChildrenController = async (
       page,
       total_page: Math.ceil(total / limit)
     }
+  })
+}
+
+export const getNewFeedsController = async (req: Request<ParamsDictionary, any, any, Pagination>, res: Response) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
+  const result = await tweetsService.getNewFeeds({
+    user_id,
+    limit,
+    page
+  })
+
+  return res.json({
+    message: TWEET_MESSAGES.GET_NEW_FEEDS_SUCCESSFUL,
+    result
   })
 }
