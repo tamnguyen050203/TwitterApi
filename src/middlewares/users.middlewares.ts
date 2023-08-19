@@ -14,7 +14,6 @@ import { ObjectId } from 'mongodb'
 import { TokenPayload } from '~/models/requests/User.requests'
 import { UserVerifyStatus } from '~/constants/enums'
 import { REGEX_USERNAME } from '~/constants/regex'
-import User from '~/models/schemas/User.schema'
 
 const passwordSchema: ParamSchema = {
   notEmpty: {

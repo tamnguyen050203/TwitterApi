@@ -1,5 +1,5 @@
 import { ParamSchema, checkSchema } from 'express-validator'
-import { at, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'

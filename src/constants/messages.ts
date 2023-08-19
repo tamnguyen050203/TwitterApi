@@ -103,5 +103,6 @@ export const BOOKMARK_MESSAGES = {
 } as const
 
 export const SEARCH_MESSAGES = {
-  SEARCH_SUCCESSFULLY: 'Search successfully'
+  SEARCH_SUCCESSFULLY: 'Search successfully',
+  MEDIA_TYPE_INVALID: 'Media type invalid'
 }
