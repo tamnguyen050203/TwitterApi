@@ -12,7 +12,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import Follower from '~/models/schemas/Follower.schema'
 import axios from 'axios'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { verify } from 'crypto'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/send-email'
 
 config()
 
@@ -231,8 +231,6 @@ class UserService {
       })
     )
 
-    console.log('email verify token : ', email_verify_token)
-
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken({
       user_id: user_id.toString(),
       verify: UserVerifyStatus.Unverified
@@ -246,6 +244,14 @@ class UserService {
         exp
       })
     )
+
+    // Flow verify email
+    // 1. Server send email to user
+    // 2. User click link in email
+    // 3. Client send request to server with email verify token
+    // 4. Server verify email verify token
+    // 5. Client receive access_token and refresh_token
+    await sendVerifyRegisterEmail(payload.email, email_verify_token)
 
     return {
       access_token,
@@ -329,8 +335,10 @@ class UserService {
   }
 
   // Resend email verify token
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = await this.signEmailVerifyToken({ user_id, verify: UserVerifyStatus.Unverified })
+
+    await sendVerifyRegisterEmail(email, email_verify_token)
 
     // Update email verify token
     await databaseService.users.updateOne(
@@ -345,15 +353,13 @@ class UserService {
       }
     )
 
-    console.log('email verify token : ', email_verify_token)
-
     return {
       message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESSFUL
     }
   }
 
   // Forgot password
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({ user_id, verify, email }: { user_id: string; verify: UserVerifyStatus; email: string }) {
     const forgot_password_token = await this.signForgotPasswordToken({ user_id, verify })
     await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
       {
@@ -364,7 +370,8 @@ class UserService {
       }
     ])
 
-    console.log('forgot password token : ', forgot_password_token)
+    await sendForgotPasswordEmail(email, forgot_password_token)
+
     return {
       message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
