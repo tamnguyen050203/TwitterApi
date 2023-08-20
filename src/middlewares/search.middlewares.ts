@@ -13,7 +13,7 @@ export const searchValidator = validate(
       media_type: {
         custom: {
           options: (value) => {
-            if (![MediaTypeQuery.Image, MediaTypeQuery.Video].includes(value)) {
+            if (value && ![MediaTypeQuery.Image, MediaTypeQuery.Video].includes(value)) {
               throw new Error(SEARCH_MESSAGES.MEDIA_TYPE_INVALID)
             }
             return true

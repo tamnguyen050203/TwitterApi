@@ -256,7 +256,6 @@ class TweetsService {
         }
       )
       .toArray()
-
     const ids = followed_user_ids.map((item) => item.followed_user_id)
     ids.push(user_id_obj)
     const [tweets, total] = await Promise.all([

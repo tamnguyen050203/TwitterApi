@@ -1,40 +1,60 @@
 import e from 'express'
 import databaseService from './database.services'
 import { ObjectId } from 'mongodb'
-import { MediaType, MediaTypeQuery, TweetType } from '~/constants/enums'
+import { MediaType, MediaTypeQuery, PeopleFollow, TweetType } from '~/constants/enums'
 
-class SearchServices {
+class SearchService {
   async search({
     limit,
     page,
     content,
+    user_id,
     media_type,
-    user_id
+    people_follow
   }: {
     limit: number
     page: number
     content: string
-    media_type: MediaTypeQuery
     user_id: string
+    media_type?: MediaTypeQuery
+    people_follow?: PeopleFollow
   }) {
     const $match: any = {
       $text: {
         $search: content
       }
     }
-
-    if (media_type && typeof media_type === 'string') {
+    if (media_type) {
       if (media_type === MediaTypeQuery.Image) {
         $match['medias.type'] = MediaType.Image
       }
-
       if (media_type === MediaTypeQuery.Video) {
         $match['medias.type'] = {
           $in: [MediaType.Video, MediaType.HLS]
         }
       }
     }
-
+    if (people_follow && people_follow === PeopleFollow.Following) {
+      const user_id_obj = new ObjectId(user_id)
+      const followed_user_ids = await databaseService.followers
+        .find(
+          {
+            user_id: user_id_obj
+          },
+          {
+            projection: {
+              followed_user_id: 1,
+              _id: 0
+            }
+          }
+        )
+        .toArray()
+      const ids = followed_user_ids.map((item) => item.followed_user_id)
+      ids.push(user_id_obj)
+      $match['user_id'] = {
+        $in: ids
+      }
+    }
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
@@ -74,12 +94,6 @@ class SearchServices {
                 }
               ]
             }
-          },
-          {
-            $skip: limit * (page - 1)
-          },
-          {
-            $limit: limit
           },
           {
             $lookup: {
@@ -191,6 +205,12 @@ class SearchServices {
                 date_of_birth: 0
               }
             }
+          },
+          {
+            $skip: limit * (page - 1)
+          },
+          {
+            $limit: limit
           }
         ])
         .toArray(),
@@ -234,22 +254,6 @@ class SearchServices {
             }
           },
           {
-            $addFields: {
-              mentions: {
-                $map: {
-                  input: '$mentions',
-                  as: 'mention',
-                  in: {
-                    _id: '$$mention._id',
-                    name: '$$mention.name',
-                    username: '$$mention.username',
-                    email: '$$mention.email'
-                  }
-                }
-              }
-            }
-          },
-          {
             $count: 'total'
           }
         ])
@@ -282,5 +286,5 @@ class SearchServices {
   }
 }
 
-const searchServices = new SearchServices()
+const searchServices = new SearchService()
 export default searchServices
