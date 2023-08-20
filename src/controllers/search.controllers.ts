@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { PeopleFollow } from '~/constants/enums'
 import { SEARCH_MESSAGES } from '~/constants/messages'
 import { SearchQuery } from '~/models/requests/Search.requests'
 import searchServices from '~/services/search.services'

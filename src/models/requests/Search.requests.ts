@@ -3,6 +3,6 @@ import { Pagination } from './Tweet.requests'
 
 export interface SearchQuery extends Pagination {
   content: string
-  media_type: MediaTypeQuery
-  people_follow: PeopleFollow
+  media_type?: MediaTypeQuery
+  people_follow?: PeopleFollow
 }

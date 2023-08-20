@@ -104,5 +104,7 @@ export const BOOKMARK_MESSAGES = {
 
 export const SEARCH_MESSAGES = {
   SEARCH_SUCCESSFULLY: 'Search successfully',
-  MEDIA_TYPE_INVALID: 'Media type invalid'
+  MEDIA_TYPE_INVALID: 'Media type invalid',
+  CONTENT_INVALID: 'Content invalid',
+  PEOPLE_FOLLOW_INVALID: 'People follow invalid'
 }

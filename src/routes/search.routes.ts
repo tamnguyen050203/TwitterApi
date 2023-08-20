@@ -10,7 +10,7 @@ searchRouter.get(
   '/',
   accessTokenValidator,
   verifiedUserValidator,
-  // searchValidator,
+  searchValidator,
   wrapRequestHandler(searchController)
 )
 
