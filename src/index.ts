@@ -11,6 +11,7 @@ import cors from 'cors'
 import tweetRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import searchRouter from './routes/search.routes'
+import '~/utils/s3'
 
 config()
 
