@@ -1,7 +1,7 @@
-import { getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
+import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import { Request } from 'express'
 import sharp from 'sharp'
-import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import fs from 'fs'
 import fsPromises from 'fs/promises'
 import { isProduction } from '~/constants/config'
@@ -14,6 +14,9 @@ import VideoStatus from '~/models/schemas/VideoStatus.schema'
 import { uploadFileToS3 } from '~/utils/s3'
 import mime from 'mime'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
+import path from 'path'
+import { rimrafSync } from 'rimraf'
+
 config()
 
 class Queue {
@@ -55,7 +58,20 @@ class Queue {
       try {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         this.items.shift()
-        await fsPromises.unlink(videoPath)
+        const files = getFiles(path.resolve(UPLOAD_VIDEO_DIR, idName))
+        await Promise.all(
+          files.map((filepath) => {
+            const filename = 'videos-hls/' + filepath.replace(path.resolve(UPLOAD_VIDEO_DIR), '')
+            return uploadFileToS3({
+              filepath,
+              filename,
+              contentType: mime.getType(filepath) as string
+            })
+          })
+        )
+
+        rimrafSync(path.resolve(UPLOAD_VIDEO_DIR, idName))
+
         await databaseService.videoStatus.updateOne(
           { name: idName },
           {

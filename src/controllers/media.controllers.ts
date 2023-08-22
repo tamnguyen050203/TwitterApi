@@ -6,7 +6,8 @@ import { MEDIA_MESSAGES } from '~/constants/messages'
 import mediasService from '~/services/medias.services'
 import fs from 'fs'
 import mime from 'mime'
-import { Result } from 'express-validator'
+import { sendFileToS3 } from '~/utils/s3'
+import rimrafSync from 'rimraf'
 
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
   const urls = await mediasService.handleUploadImage(req)
@@ -89,26 +90,28 @@ export const uploadVideoHLSController = async (req: Request, res: Response, next
 
 export const serveM3u8Controller = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
-  const masterPath = path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8')
-  return res.sendFile(path.resolve(masterPath), (err) => {
-    if (err) {
-      res.status((err as any).status).json({
-        message: MEDIA_MESSAGES.NOT_FOUND
-      })
-    }
-  })
+  sendFileToS3(res, `videos-hls/${id}/master.m3u8`)
+  // const masterPath = path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8')
+  // return res.sendFile(path.resolve(masterPath), (err) => {
+  //   if (err) {
+  //     res.status((err as any).status).json({
+  //       message: MEDIA_MESSAGES.NOT_FOUND
+  //     })
+  //   }
+  // })
 }
 
 export const serveSegmentController = (req: Request, res: Response, next: NextFunction) => {
   const { id, v, segment } = req.params
   // segment: 0.ts, 1.ts, 2.ts, ...
-  return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
-    if (err) {
-      res.status((err as any).status).json({
-        message: MEDIA_MESSAGES.NOT_FOUND
-      })
-    }
-  })
+  sendFileToS3(res, `videos-hls/${id}/${v}/${segment}`)
+  // return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, v, segment), (err) => {
+  //   if (err) {
+  //     res.status((err as any).status).json({
+  //       message: MEDIA_MESSAGES.NOT_FOUND
+  //     })
+  //   }
+  // })
 }
 
 export const videoStatusController = async (req: Request, res: Response, next: NextFunction) => {
