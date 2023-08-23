@@ -12,6 +12,8 @@ import tweetRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import searchRouter from './routes/search.routes'
 import '~/utils/s3'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 
 config()
 
@@ -24,6 +26,7 @@ databaseService.connect().then(() => {
 })
 
 const app = express()
+const httpServer = createServer(app)
 app.use(cors())
 const port = process.env.PORT || 3066
 
@@ -42,6 +45,37 @@ app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 app.use(defaultErrorHandler)
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:3050'
+  }
+})
+const users: {
+  [key: string]: {
+    socket_id: string
+  }
+} = {}
+io.on('connection', (socket) => {
+  console.log(`user ${socket.id} connected`)
+  const user_id = socket.handshake.auth._id
+  users[user_id] = {
+    socket_id: socket.id
+  }
+  console.log(users)
+  socket.on('private message', (data) => {
+    const receiver_socket_id = users[data.to].socket_id
+    socket.to(receiver_socket_id).emit('receive private message', {
+      content: data.content,
+      from: user_id
+    })
+  })
+  socket.on('disconnect', () => {
+    delete users[user_id]
+    console.log(`user ${socket.id} disconnected`)
+    console.log(users)
+  })
+})
+
+httpServer.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
 })
