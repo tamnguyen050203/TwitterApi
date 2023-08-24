@@ -1,4 +1,4 @@
-import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
+import { getFiles, getNameFromFullname, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import { Request } from 'express'
 import sharp from 'sharp'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
@@ -29,7 +29,7 @@ class Queue {
 
   async enqueue(item: any) {
     this.items.push(item)
-    const idName = getNameFromFullName(item.split('\\').pop() as string)
+    const idName = getNameFromFullname(item.split('\\').pop() as string)
     await databaseService.videoStatus.insertOne(
       new VideoStatus({
         name: idName,
@@ -43,7 +43,7 @@ class Queue {
     if (this.items.length > 0) {
       this.encoding = true
       const videoPath = this.items[0]
-      const idName = getNameFromFullName(videoPath.split('\\').pop() as string)
+      const idName = getNameFromFullname(videoPath.split('\\').pop() as string)
       await databaseService.videoStatus.updateOne(
         { name: idName },
         {
@@ -118,7 +118,7 @@ class MediasService {
     const files = await handleUploadImage(req)
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
-        const newName = getNameFromFullName(file.newFilename)
+        const newName = getNameFromFullname(file.newFilename)
         const newFullFilename = `${newName}.jpg`
         const newPath = UPLOAD_IMAGE_DIR + '/' + newFullFilename
         await sharp(file.filepath).jpeg({ quality: 80 }).toFile(newPath)
@@ -174,7 +174,7 @@ class MediasService {
 
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
-        const newName = getNameFromFullName(file.newFilename)
+        const newName = getNameFromFullname(file.newFilename)
         queue.enqueue(file.filepath)
         return {
           url: isProduction

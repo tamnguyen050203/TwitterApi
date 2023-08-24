@@ -1,22 +1,23 @@
-import express from 'express'
-import userRouter from '~/routes/user.routes'
-import databaseService from '~/services/database.services'
-import { defaultErrorHandler } from './middlewares/error.middlewares'
-import mediaRouter from './routes/media.routes'
-import { initFolder } from './utils/file'
-import { UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_TEMP_DIR } from './constants/dir'
 import { config } from 'dotenv'
-import staticRouter from './routes/static.routes'
+import express from 'express'
+import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
+import { defaultErrorHandler } from '~/middlewares/error.middlewares'
+import mediasRouter from '~/routes/media.routes'
+import staticRouter from '~/routes/static.routes'
+import usersRouter from '~/routes/user.routes'
+import databaseService from '~/services/database.services'
+import { initFolder } from '~/utils/file'
 import cors from 'cors'
-import tweetRouter from './routes/tweets.routes'
-import bookmarkRouter from './routes/bookmarks.routes'
-import searchRouter from './routes/search.routes'
-import '~/utils/s3'
+import tweetsRouter from '~/routes/tweets.routes'
+import bookmarksRouter from '~/routes/bookmarks.routes'
+import searchRouter from '~/routes/search.routes'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import Conversation from '~/models/schemas/Conversations.schema'
+import conversationsRouter from '~/routes/conversations.routes'
+import { ObjectId } from 'mongodb'
 
 config()
-
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshTokens()
@@ -24,23 +25,22 @@ databaseService.connect().then(() => {
   databaseService.indexFollowers()
   databaseService.indexTweets()
 })
-
 const app = express()
 const httpServer = createServer(app)
 app.use(cors())
 const port = process.env.PORT || 3066
 
-// Crate folder
-initFolder(UPLOAD_IMAGE_TEMP_DIR)
-initFolder(UPLOAD_VIDEO_TEMP_DIR)
-
+// Tạo folder upload
+initFolder()
 app.use(express.json())
-app.use('/users', userRouter)
-app.use('/medias', mediaRouter)
-app.use('/static', staticRouter)
-app.use('/tweets', tweetRouter)
+app.use('/users', usersRouter)
+app.use('/medias', mediasRouter)
+app.use('/tweets', tweetsRouter)
+app.use('/bookmarks', bookmarksRouter)
+// app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
-app.use('/bookmarks', bookmarkRouter)
+app.use('/conversations', conversationsRouter)
+app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 app.use(defaultErrorHandler)
@@ -62,11 +62,23 @@ io.on('connection', (socket) => {
     socket_id: socket.id
   }
   console.log(users)
-  socket.on('private message', (data) => {
-    const receiver_socket_id = users[data.to].socket_id
-    socket.to(receiver_socket_id).emit('receive private message', {
-      content: data.content,
-      from: user_id
+  socket.on('send_message', async (data) => {
+    console.log(data)
+    const { receiver_id, sender_id, content } = data.payload
+    console.log(data.payload)
+    const receiver_socket_id = users[receiver_id]?.socket_id
+    if (!receiver_socket_id) {
+      return
+    }
+    const conversation = new Conversation({
+      sender_id: new ObjectId(sender_id),
+      receiver_id: new ObjectId(receiver_id),
+      content: content
+    })
+    const result = await databaseService.conversations.insertOne(conversation)
+    conversation._id = result.insertedId
+    socket.to(receiver_socket_id).emit('receive_message', {
+      payload: conversation
     })
   })
   socket.on('disconnect', () => {

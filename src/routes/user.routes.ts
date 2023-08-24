@@ -36,7 +36,6 @@ import {
 import { wrapRequestHandler } from '~/utils/handlers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import { UpdateMeReqBody } from '~/models/requests/User.requests'
-import { access } from 'fs'
 
 const userRouter = Router()
 
