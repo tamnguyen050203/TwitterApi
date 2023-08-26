@@ -164,6 +164,7 @@ const imageSchema: ParamSchema = {
 const userIdSchema: ParamSchema = {
   custom: {
     options: async (value: string, { req }) => {
+      console.log(value)
       if (!ObjectId.isValid(value)) {
         throw new ErrorWithStatus({
           message: USERS_MESSAGES.INVALID_USER_ID,
@@ -179,13 +180,6 @@ const userIdSchema: ParamSchema = {
         throw new ErrorWithStatus({
           message: USERS_MESSAGES.USER_NOT_FOUND,
           status: HTTP_STATUS.NOT_FOUND
-        })
-      }
-
-      if (followed_user._id.equals(new ObjectId((req as Request).user._id))) {
-        throw new ErrorWithStatus({
-          message: USERS_MESSAGES.CANNOT_FOLLOW_YOURSELF,
-          status: HTTP_STATUS.BAD_REQUEST
         })
       }
     }

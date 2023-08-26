@@ -15,7 +15,7 @@ const conversationsRouter = Router()
  * Params: { receiverId: string }
  */
 conversationsRouter.get(
-  '/receivers/:receiverId',
+  '/receivers/:receiver_id',
   accessTokenValidator,
   verifiedUserValidator,
   paginationValidator,

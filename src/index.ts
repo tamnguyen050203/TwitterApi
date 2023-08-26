@@ -74,6 +74,8 @@ io.use(async (socket, next) => {
       })
     }
     socket.handshake.auth.decoded_authorization = decoded_authorization
+    socket.handshake.auth.access_token = access_token
+    next()
   } catch (err) {
     next({
       message: 'Unauthorized',
@@ -88,6 +90,19 @@ io.on('connection', (socket) => {
   users[user_id] = {
     socket_id: socket.id
   }
+  socket.use(async (packet, next) => {
+    const { access_token } = socket.handshake.auth
+    try {
+      await verifyAccessToken(access_token)
+    } catch (err) {
+      next(new Error('Unauthorized'))
+    }
+  })
+  socket.on('error', (err) => {
+    if (err.message === 'Unauthorized') {
+      socket.disconnect()
+    }
+  })
   socket.on('send_message', async (data) => {
     const { receiver_id, sender_id, content } = data.payload
     const receiver_socket_id = users[receiver_id]?.socket_id
