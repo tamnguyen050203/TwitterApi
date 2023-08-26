@@ -14,6 +14,7 @@ import { ObjectId } from 'mongodb'
 import { TokenPayload } from '~/models/requests/User.requests'
 import { UserVerifyStatus } from '~/constants/enums'
 import { REGEX_USERNAME } from '~/constants/regex'
+import { verifyAccessToken } from '~/utils/commons'
 
 const passwordSchema: ParamSchema = {
   notEmpty: {
@@ -85,7 +86,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
-          secretOnPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+          secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
         })
         const { user_id } = decoded_forgot_password_token
         const user = await databaseService.users.findOne({
@@ -257,25 +258,7 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value: string, { req }) => {
             const access_token = (value || '').split(' ')[1]
-            if (access_token === '') {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-            try {
-              const decoded_authorization = await verifyToken({
-                token: access_token,
-                secretOnPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
-              })
-              ;(req as Request).decoded_authorization = decoded_authorization
-            } catch (error) {
-              throw new ErrorWithStatus({
-                message: capitalize((error as JsonWebTokenError).message),
-                status: HTTP_STATUS.UNAUTHORIZED
-              })
-            }
-            return true
+            return await verifyAccessToken(access_token, req as Request)
           }
         }
       }
@@ -300,7 +283,7 @@ export const refreshTokenValidator = validate(
             const [decoded_refresh_token, refresh_token] = await Promise.all([
               verifyToken({
                 token: value,
-                secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+                secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
               }),
               databaseService.refreshTokens.findOne({ token: value })
             ])
@@ -342,7 +325,7 @@ export const verifyEmailTokenValidator = validate(
           try {
             const decoded_email_verify_token = await verifyToken({
               token: value,
-              secretOnPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+              secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
             })
 
             ;(req as Request).decoded_email_verify_token = decoded_email_verify_token

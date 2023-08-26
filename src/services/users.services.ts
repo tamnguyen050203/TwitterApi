@@ -209,7 +209,7 @@ class UserService {
   private decodeRefreshToken(refresh_token: string) {
     return verifyToken({
       token: refresh_token,
-      secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+      secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
     })
   }
 

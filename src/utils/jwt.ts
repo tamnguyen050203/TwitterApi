@@ -27,13 +27,13 @@ export const signToken = ({
 
 export const verifyToken = ({
   token,
-  secretOnPublicKey = process.env.JWT_SECRET as string
+  secretOrPublicKey = process.env.JWT_SECRET as string
 }: {
   token: string
-  secretOnPublicKey?: string
+  secretOrPublicKey?: string
 }) => {
   return new Promise<TokenPayload>((resolve, reject) => {
-    jwt.verify(token, secretOnPublicKey, (_err, _decoded) => {
+    jwt.verify(token, secretOrPublicKey, (_err, _decoded) => {
       if (_err) {
         throw reject(_err)
       }
