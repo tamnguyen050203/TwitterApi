@@ -23,8 +23,8 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.services'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
-import { pick } from 'lodash'
 import { config } from 'dotenv'
+import { envConfig } from '~/constants/config'
 
 config()
 
@@ -228,7 +228,7 @@ export const changePasswordController = async (
 export const oauthController = async (req: Request, res: Response) => {
   const { code } = req.query
   const result = await userService.oauth(code as string)
-  const urlRedirect = `${process.env.CLIENT_REDIRECT_URI}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}`
+  const urlRedirect = `${envConfig.clientRedirectCallback}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}`
   return res.redirect(urlRedirect)
   // return res.json({
   //   message: result.newUser ? USERS_MESSAGES.LOGIN_SUCCESSFUL : USERS_MESSAGES.REGISTER_SUCCESSFUL

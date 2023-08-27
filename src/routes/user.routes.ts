@@ -1,5 +1,4 @@
-import e, { Router } from 'express'
-import { validate } from '~/utils/validation'
+import { Router } from 'express'
 import {
   loginController,
   registerController,
@@ -40,10 +39,36 @@ import { UpdateMeReqBody } from '~/models/requests/User.requests'
 const userRouter = Router()
 
 /**
- * Description. Login a user
- * Path: /users/login
- * Method: POST
- * Body: { email: string, password: string }
+ * @swagger
+ * /users/login:
+ *   post:
+ *     tags:
+ *       - users
+ *     summary: Login
+ *     description: Login to the application
+ *     operationId: login
+ *     requestBody:
+ *       description: User credentials
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/LoginBody"
+ *       required: true
+ *     responses:
+ *       "200":
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 result:
+ *                   $ref: "#/components/schemas/SuccessAuthentication"
+ *       "422":
+ *         description: Invalid input
  */
 userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 
