@@ -1,0 +1,8 @@
+version: '1'
+services:
+  twitter: 
+    image: tam/twitter:v1
+    ports:
+      - "30066:3066"
+    volumes:
+      - /c/workspace/nodejs/TwitterApi/uploads:/app/uploads
