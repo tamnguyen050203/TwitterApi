@@ -8,7 +8,7 @@ components:
           example: admin1@gmail.com
         password:
           type: string
-          example: Duoc123!
+          example: 123456#As
     SuccessAuthentication:
       type: object
       properties:

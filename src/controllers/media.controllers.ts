@@ -7,7 +7,6 @@ import mediasService from '~/services/medias.services'
 import fs from 'fs'
 import mime from 'mime'
 import { sendFileToS3 } from '~/utils/s3'
-import rimrafSync from 'rimraf'
 
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
   const urls = await mediasService.handleUploadImage(req)
