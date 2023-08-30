@@ -2,7 +2,7 @@
 module.exports = {
   apps: [
     {
-      name: 'twitter-clone-api',
+      name: 'twitter-api',
       script: './dist/index.js', // Remove 'node' command
       env: {
         NODE_ENV: 'development',
