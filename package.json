@@ -59,7 +59,7 @@
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
     "minimist": "^1.2.8",
-    "mongodb": "^5.7.0",
+    "mongodb": "^5.8.0",
     "nanoid": "^4.0.2",
     "sharp": "^0.32.4",
     "socket.io": "^4.7.2",
