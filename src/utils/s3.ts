@@ -1,10 +1,9 @@
 import { S3 } from '@aws-sdk/client-s3'
-import { envConfig } from '~/constants/config'
-import fs from 'fs'
 import { Upload } from '@aws-sdk/lib-storage'
-import path from 'path'
-import HTTP_STATUS from '~/constants/httpStatus'
 import { Response } from 'express'
+import fs from 'fs'
+import { envConfig } from '~/constants/config'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 const s3 = new S3({
   region: envConfig.awsRegion,
