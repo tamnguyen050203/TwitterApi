@@ -33,14 +33,11 @@ const createSendEmailCommand = ({
 }) => {
   return new SendEmailCommand({
     Destination: {
-      /* required */
       CcAddresses: ccAddresses instanceof Array ? ccAddresses : [ccAddresses],
       ToAddresses: toAddresses instanceof Array ? toAddresses : [toAddresses]
     },
     Message: {
-      /* required */
       Body: {
-        /* required */
         Html: {
           Charset: 'UTF-8',
           Data: body

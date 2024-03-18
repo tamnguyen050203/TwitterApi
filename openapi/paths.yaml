@@ -230,7 +230,7 @@ paths:
               properties:
                 email:
                   type: string
-                  example: duthanhduoc100@gmail.com
+                  example: tamnguyen100@gmail.com
         required: true
       responses:
         "200":
@@ -291,10 +291,10 @@ paths:
                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjRiZTBhZDJlNDNkMjQ2NDM5NGZlZWRiIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoxLCJpYXQiOjE2OTEzODMyMjYsImV4cCI6MTcwMDAyMzIyNn0.bFnaBfxWl-Q48HCwAeMpNzZwTO9LEjcBd7Zyipjqr64
                 password:
                   type: string
-                  example: Duoc123!
+                  example: Tam123!
                 confirm_password:
                   type: string
-                  example: Duoc123!
+                  example: Tam123!
         required: true
       responses:
         default:
@@ -321,7 +321,7 @@ paths:
           required: true
           schema:
             type: string
-            example: duthanhduoc
+            example: tamnguyen
       responses:
         default:
           description: Lấy thông tin user theo username thành công
@@ -408,13 +408,13 @@ paths:
               properties:
                 old_password:
                   type: string
-                  example: Duoc123!
+                  example: Tam123!
                 password:
                   type: string
-                  example: Duoc1234!
+                  example: Tam1234!
                 confirm_password:
                   type: string
-                  example: Duoc1234!
+                  example: Tam1234!
         required: true
       responses:
         default:
